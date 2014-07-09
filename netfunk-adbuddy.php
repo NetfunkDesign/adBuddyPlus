@@ -31,7 +31,6 @@ define('ADBUDDY_JS_MTITLE','You have JS disabled...');
 define('ADBUDDY_JS_MSG','Notice that you need to enable javascript in order to use our site, Thanks!');
 
 /* addBuddy CSS */
-
 function netfunk_adbuddy_css() {
 	wp_register_style( 'adbuddy-css', plugin_dir_url(__FILE__) . 'style.css' );
 	wp_enqueue_style( 'adbuddy-css' );
@@ -40,7 +39,6 @@ add_action('wp_print_styles', 'netfunk_adbuddy_css');
 
 
 /* addBuddy Options Datastore */
-
 function netfunk_adbuddy_menu() {
 	add_options_page( 'adBuddy+ Options', 'adBuddy+', 'manage_options', 'adbuddy', 'adbuddy_options_page' );
 }
@@ -48,7 +46,6 @@ add_action( 'admin_menu', 'netfunk_adbuddy_menu' );
 
 
 /* Register addBuddy Settings */
-
 add_action('admin_init', 'plugin_admin_init');
 function plugin_admin_init(){
   register_setting( 'adbuddy_options', 'adbuddy_options', 'adbuddy_options_validate' );
@@ -73,6 +70,7 @@ function plugin_admin_init(){
   
 }
 
+/* Plugin section title */
 function plugin_section_text() {
   echo '<p>Display a pop-up notice to ask your visitors to disable their AdBlocker add-on. Also detects if scripting is active.</p>';
   echo '<hr />';
@@ -111,6 +109,7 @@ function adbuddy_img_preview() {
     <?php
 }
 
+/* hack-in image uploader bits */
 function adbuddy_display_img() {
     $options = get_option( 'adbuddy_options' );
     ?>
@@ -123,7 +122,7 @@ function adbuddy_display_img() {
     <?php
 }
 
-
+/* enqueue upload js */
 function adbuddy_enqueue_scripts() {
     wp_register_script( 'adbuddy-upload', plugin_dir_url(__FILE__).'upload.js', array('jquery','media-upload','thickbox') );
  
@@ -141,6 +140,7 @@ function adbuddy_enqueue_scripts() {
 }
 add_action('admin_enqueue_scripts', 'adbuddy_enqueue_scripts');
 
+/* hack-in image select button title */
 function adbuddy_options_setup() {
     global $pagenow;
  
@@ -162,7 +162,6 @@ function replace_thickbox_text($translated_text, $text, $domain) {
 }
 
 /* remove custom display image ( reverts to default ) */
-
 function adbuddy_delete_image( $image_url ) {
     global $wpdb;
  
@@ -176,9 +175,7 @@ function adbuddy_delete_image( $image_url ) {
     }
 }
 
-
 /* addBuddy Options Validate */
-
 function adbuddy_options_validate($input) {
 
   $options['title'] = (!empty($input['title']) ? trim($input['title']) : ADBUDDY_TITLE );
@@ -197,9 +194,7 @@ function adbuddy_options_validate($input) {
 
 }
 
-
 /* addBuddy Options Page */
-
 function adbuddy_options_page() {
 
 	if ( !current_user_can( 'manage_options' ) )  {
@@ -228,7 +223,6 @@ function adbuddy_options_page() {
 }
 
 /* adBuddy JS added to Wordpress page footer */
-
 if (!function_exists( 'netfunk_adbuddy')){
   function netfunk_adbuddy_script() {
 	if ( !is_admin() ) {
@@ -255,7 +249,6 @@ if (!function_exists( 'netfunk_adbuddy')){
 add_action( 'wp_footer', 'netfunk_adbuddy_script');
 
 /* adBuddy NoScript added to page footer */
-
 if (!function_exists( 'netfunk_adbuddy')){
   function netfunk_adbuddy() {
     if ( !is_admin() ) {
@@ -267,7 +260,5 @@ if (!function_exists( 'netfunk_adbuddy')){
 }
 
 add_action( 'wp_footer', 'netfunk_adbuddy');
-
-
 
 // EOF
