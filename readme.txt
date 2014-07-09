@@ -28,7 +28,7 @@ Features include:
 == Installation ==
 
 1. Install adBuddy+ either via the WordPress.org plugin directory, or by uploading the files to your server
-2. After activating adBuddy+ by NetfunkDesign, you may need to add the CSS class *.adbuddy-protected* to your ad container(s).
+2. After activating adBuddy+ you may need to add the CSS class *.adbuddy-protected* to your ad container(s).
 3. Go to the plugins options page and make any necessary changes to the pop-up content information.
 3. You're done. Start taking back your ad revenue... 
 
@@ -37,6 +37,10 @@ Features include:
 = I have activated the plugin, but it's not working, what's going on? =
 
 Be sure to add the class *.adbuddy-protected* to your ad container(s). This currently only auto-detects most Google ads. 
+
+= How do I use this on mobile sites =
+
+Add the CSS class *.not-mobile* to disable on mobile sites. 
 
 == Screenshots ==
 
