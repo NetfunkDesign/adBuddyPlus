@@ -1,6 +1,6 @@
 === adBuddy+ (AdBlocker Detection) by NetfunkDesign === 
-Contributors: NetfunkDesign, Phil Sanders, Jmlevick 
-Donate link: http://netfunkdesign.com/adbuddyplus/
+Contributors: NetfunkDesign, Jmlevick 
+Donate link: http://netfunkdesign.com/adbuddyplus/support
 Tags: NetfunkDesign, AdBlocker, Ad Blocker, Jmlevick, block ads, adBuddy, jsBuddy, Adsense, Google, Ads 
 Requires at least: 3.5 
 Tested up to: 3.9 
@@ -28,7 +28,7 @@ Features include:
 == Installation ==
 
 1. Install adBuddy+ either via the WordPress.org plugin directory, or by uploading the files to your server
-2. After activating adBuddy+ you may need to add the CSS class *.adbuddy-protected* to your ad container(s).
+2. You may need to add the CSS class *.adbuddy-protected* to your ad container(s). Currently only auto detecting some types of google ads.
 3. Go to the plugins options page and make any necessary changes to the pop-up content information.
 3. You're done. Start taking back your ad revenue... 
 
@@ -50,5 +50,18 @@ Add the CSS class *.not-mobile* to disable on mobile sites.
 
 == Changelog ==
 
+= 1.1.3 =
+* More minor fixes
+
+= 1.1.2c =
+* Fixed undifined varible 'my_options'
+
+= 1.1.2b =
+* Fixed default notificaton image not displaying on options page
+
+= 1.1.2 =
+* Fixed close button. Previously not working.
+
 = 1.1 =
-* Initial release
+* First release
+

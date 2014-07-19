@@ -4,20 +4,30 @@
 
 Plugin Name: adBuddy+ (AdBlocker Detection)
 Description: Display a pop-up notice to ask your visitors to disable their AdBlocker add-on for Firefox. Customize the display image, welcome text, text message and more all from the options page. This plugin is built using Jmlevick's adBuddy + jsBuddy software. Free to use and all credit goes to Jmlevick. View the original project here: https://github.com/Jmlevick/adbuddy-jsbuddy.
-Version: 1.1 
-Date: 07/03/14 
+Version: 1.1.4
+Date: 07/18/14 
 Author: NetfunkDesign 
 Author URI: http://www.netfunkdesign.com/contact.php
 Plugin URI: http://www.netfunkdesign.com/adbuddyplus/ 
 
- USAGE:
+== USAGE:
 
- 1. Activate the plugin. 
- 2. You will also need to add the class 'adbuddy-protected' to your ads 
+    1. Install adBuddy+ either via the WordPress.org plugin directory, or by uploading the files to your server
+    2. You may need to add the CSS class *.adbuddy-protected* to your ad container(s) but not always.
+    3. Go to the plugins options page and make any necessary changes to the pop-up content information.
+    3. You're done. Start taking back your ad revenue... 
 
- CREDITS: 
+== FAQ:
+
+    Q. I have activated the plugin, but it's not working, what's going on? =
+    A. Be sure to add the class *.adbuddy-protected* to your ad container(s). Currently only auto-detects most Google ads. 
+	
+	Q. How do I use this on mobile sites 
+	A. Add the CSS class *.not-mobile* to disable on mobile sites. 
+
+== CREDITS: 
  
- adBuddy + jsBuddy webiste: https://github.com/Jmlevick/adbuddy-jsbuddy 
+    adBuddy + jsBuddy webiste: https://github.com/Jmlevick/adbuddy-jsbuddy 
   
 */
 
@@ -27,7 +37,7 @@ define('ADBUDDY_IMG', plugin_dir_url(__FILE__).'img/stop-adblock.png');
 define('ADBUDDY_TITLE','Please disable your AdBlocker...');
 define('ADBUDDY_MSG','The few ads we do display help to keep this site a live. Every cent helps so please disable your AdBlocker for this website.');
 define('ADBUDDY_BUTTON','Reload Page');
-define('ADBUDDY_JS_MTITLE','You have JS disabled...');
+define('ADBUDDY_JS_TITLE','You have JS disabled...');
 define('ADBUDDY_JS_MSG','Notice that you need to enable javascript in order to use our site, Thanks!');
 
 /* addBuddy CSS */
@@ -59,14 +69,7 @@ function plugin_admin_init(){
   
   /* populate predfined settings */
   $options = get_option('adbuddy_options');
-  
-  $my_options['adbuddy_options']['force'];
-  $my_options['adbuddy_options']['title'];
-  $my_options['adbuddy_options']['message'];
-  $my_options['adbuddy_options']['button'];
-  $my_options['adbuddy_options']['display_img'];
-
-  add_option( 'adbuddy_options', $my_options,'','yes');
+  add_option( 'adbuddy_options', $options,'','yes');
   
 }
 
@@ -104,7 +107,7 @@ function adbuddy_button() {
 function adbuddy_img_preview() {
     $options = get_option( 'adbuddy_options' );  ?>
     <div id="upload_image_preview">
-        <img style="max-width:300px" src="<?php echo esc_url( $options['display_img'] ); ?>" />
+        <img style="max-width:300px" src="<?php echo esc_url( ( !empty( $options['display_img'] ) ? $options['display_img'] : ADBUDDY_BUTTON ) ); ?>" />
     </div>
     <?php
 }
@@ -113,7 +116,7 @@ function adbuddy_img_preview() {
 function adbuddy_display_img() {
     $options = get_option( 'adbuddy_options' );
     ?>
-        <input type="hidden" id="adbuddy_display_img" name="adbuddy_options[display_img]" value="<?php echo esc_url( $options['display_img'] ); ?>" />
+        <input type="hidden" id="adbuddy_display_img" name="adbuddy_options[display_img]" value="<?php echo esc_url( ( !empty( $options['display_img'] ) ? $options['display_img'] : ADBUDDY_BUTTON ) ); ?>" />
         <input id="upload_img_button" type="button" class="button" value="<?php _e( 'Upload image', 'adbuddy' ); ?>" />
         <?php if ( $options['display_img'] != ADBUDDY_IMG ): ?>
             <input id="delete_logo_button" name="adbuddy_options[delete_logo]" type="submit" class="button" value="<?php _e( 'Delete Image', 'adbuddy' ); ?>" />
@@ -234,14 +237,20 @@ if (!function_exists( 'netfunk_adbuddy')){
       $button = (isset($options['button']) ? $options['button'] : ADBUDDY_BUTTON);
 
 	  echo "<script>";
+	  
+	  echo "var closeAdbuddy; closeAdbuddy=function(){
+			jQuery('#adbuddy-no-adb-container').hide();
+			jQuery('#adbuddy-overlay').hide();
+	  };";
+	  
 	  echo 'jQuery(document).ready(function($) {';
 	  echo "$(\".adsbygoogle\").addClass(\"adbuddy-protected\"); ";
 	  echo "var adBuddy;
 	adBuddy=function(){var a;a=function(){var a,b;b=\"\";for(a=0;8>a;)b+=\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\".charAt(Math.floor(62*Math.random())),a++;return window.adBuddycaptcha=b};$(\".adbuddy-protected\").each(function(){if(1024>screen.width){if(!1===$(this).is(\":visible\")&&-1===$($(this))[0].className.indexOf(\"not-mobile\"))return a(),window.adBuddytoken=[\"mobile\",adBuddycaptcha]}else if(!1===$(this).is(\":visible\"))return a(),window.adBuddytoken=[\"desktop\",adBuddycaptcha]});if(\"undefined\"!==
-	typeof adBuddytoken&&null!==adBuddytoken&&\"mobile\"===adBuddytoken[0])return $(\"body\").append(\"<div id='adbuddy-overlay'></div><div id='adbuddy-no-adb-container'>".($options['force'] != 1 ? "<img src='".plugin_dir_url(__FILE__)."img/close.png' id='adbuddy-close-button'>" : '')."<p class='adbuddy-p'><img id='adbuddy-stopadblock' src='".plugin_dir_url(__FILE__)."img/stop-adblock.png' alt='stop-adblock'></p><h3>".$title."</h3><p class='adbuddy-p' style='margin-bottom: 15px;'>N".$message."</p><div id='adbuddy-no-adb-suggestions'><a href='#' id='adbuddy-donebutton' onclick='location.reload();' class='button success radius'>".$button."</a></div></div>\"),
-	$(\"#adbuddy-overlay\").show(),$(\"#adbuddy-no-adb-container\").show();if(\"undefined\"!==typeof adBuddytoken&&null!==adBuddytoken&&\"desktop\"===adBuddytoken[0])return $(\"body\").append(\"<div id='adbuddy-overlay'></div><div id='adbuddy-no-adb-container'>".($options['force'] != 1 ? "<img src='".plugin_dir_url(__FILE__)."img/close.png' id='adbuddy-close-button'>" : '')."<p class='adbuddy-p'><img id='adbuddy-stopadblock' src='".plugin_dir_url(__FILE__)."img/stop-adblock.png' alt='stop-adblock'></p><h3>".$title."</h3><p class='adbuddy-p' style='margin-bottom: 15px;'>".$message."</p><div id='adbuddy-no-adb-suggestions'><a href='#' id='adbuddy-donebutton' onclick='location.reload();' class='button success radius'>".$button."</a></div></div>\"),
-	$(\"#adbuddy-overlay\").show(),$(\"#adbuddy-no-adb-container\").show()};$(document).ready(function(){adBuddy();return $(\"#donebutton\").on(\"click\",function(){return location.reload()})});";
-	  echo '});';
+	typeof adBuddytoken&&null!==adBuddytoken&&\"mobile\"===adBuddytoken[0])return $(\"body\").append(\"<div id='adbuddy-overlay'></div><div id='adbuddy-no-adb-container'>".($options['force'] != 1 ? "<a href='#' onclick='closeAdbuddy();return'><img src='".plugin_dir_url(__FILE__)."img/close.png' id='adbuddy-close-button'></a>" : '')."<p class='adbuddy-p'><img id='adbuddy-stopadblock' src='".plugin_dir_url(__FILE__)."img/stop-adblock.png' alt='stop-adblock'></p><h3>".$title."</h3><p class='adbuddy-p' style='margin-bottom: 15px;'>".$message."</p><div id='adbuddy-no-adb-suggestions'><a href='#' id='adbuddy-donebutton' onclick='location.reload();' class='button success radius'>".$button."</a></div></div>\"),
+	$(\"#adbuddy-overlay\").show(),$(\"#adbuddy-no-adb-container\").show();if(\"undefined\"!==typeof adBuddytoken&&null!==adBuddytoken&&\"desktop\"===adBuddytoken[0])return $(\"body\").append(\"<div id='adbuddy-overlay'></div><div id='adbuddy-no-adb-container'>".($options['force'] != 1 ? "<a href='#' onclick='closeAdbuddy();return'><img src='".plugin_dir_url(__FILE__)."img/close.png' id='adbuddy-close-button'></a>" : '')."<p class='adbuddy-p'><img id='adbuddy-stopadblock' src='".plugin_dir_url(__FILE__)."img/stop-adblock.png' alt='stop-adblock'></p><h3>".$title."</h3><p class='adbuddy-p' style='margin-bottom: 15px;'>".$message."</p><div id='adbuddy-no-adb-suggestions'><a href='#' id='adbuddy-donebutton' onclick='location.reload();' class='button success radius'>".$button."</a></div></div>\"),
+	$(\"#adbuddy-overlay\").show(),$(\"#adbuddy-no-adb-container\").show()};";
+	  echo "$(document).ready(function(){adBuddy();return $(\".adsbygoogle\").addClass(\"adbuddy-protected\");});});";
 	  echo '</script>';
 	}
   }
